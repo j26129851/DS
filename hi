@@ -5,6 +5,7 @@ typedef struct Linklist{
     int Score;
     struct Linklist * link;
 } Numberlist;
+Numberlist* reverseList(Numberlist* N);
 int main()
 {
     int score, count=0;
@@ -14,10 +15,13 @@ int main()
     ptr = malloc(sizeof(Numberlist));
 
 
+
     fileRead(ptr,&count);
 
     printList(ptr,count);
-    sortList(&ptr);
+
+    ptr = reverseList(ptr);
+   // sortList(&ptr);
    // addValue(ptr,&count);
    // removeValue(&ptr,&count);
    // count++;
@@ -131,4 +135,18 @@ void sortList(Numberlist ** numberlist){
         current = next;
     }
     *numberlist = sortedList;
+}
+Numberlist *reverseList(Numberlist * N){
+    Numberlist * current = N;
+    Numberlist * previous = NULL;
+    Numberlist * next = NULL;
+
+    while(current != NULL){
+        next = current->link;
+        current->link = previous;
+        previous = current;
+        current = next;
+    }
+    N = previous;
+    return N;
 }
