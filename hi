@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef struct Linklist{
+    int Score;
+    struct Linklist * link;
+} Numberlist;
+int main()
+{
+    int score, count=0;
+    Numberlist * ptr;
+    Numberlist * ptr2;
+
+    ptr = malloc(sizeof(Numberlist));
+
+
+    fileRead(ptr,&count);
+
+    printList(ptr,count);
+    sortList(&ptr);
+   // addValue(ptr,&count);
+   // removeValue(&ptr,&count);
+   // count++;
+
+    printList(ptr,count);
+
+
+
+
+    return 0;
+}
+
+void fileRead(Numberlist * numberlist,int * count){
+    FILE * fp;
+    fp = fopen("score.txt","r");
+
+    fscanf(fp,"%d",&numberlist->Score);
+    (*count)++;
+
+
+    int a;
+    while(fscanf(fp,"%d",&a) != EOF){
+
+        numberlist->link = malloc(sizeof(Numberlist));
+
+        numberlist = numberlist->link;
+        numberlist->Score = a;
+
+        (*count)++;
+    }
+
+    numberlist->link = NULL;
+
+    fclose(fp);
+
+}
+void printList(Numberlist * numberlist,int count){
+    int i;
+    printf("there are %d numbers\n",count);
+    printf("Scores entered: \n");
+    for (i=0; i<count; ++i) {
+        printf("%d\n", numberlist->Score);
+        numberlist = numberlist->link;
+    }
+}
+void addValue(Numberlist * numberlist,int * count){
+    int value;
+    scanf("%d",&value);
+
+
+    Numberlist * N = malloc(sizeof(Numberlist));
+    N->Score = value;
+    N->link = NULL;
+
+    while(numberlist->link != NULL){
+        numberlist = numberlist->link;
+    }
+    numberlist->link = N;
+    (*count)++;
+}
+void removeValue(Numberlist ** numberlist,int * count){
+    int value;
+    scanf("%d",&value);
+    Numberlist * temp = *numberlist;
+
+
+    if(temp->Score == value){  //compare first node
+        (*numberlist) = (*numberlist)->link;
+        (*count)--;
+    }
+//    else if(temp->link != NULL){
+//       // temp = temp->link;
+//    }else{
+//        printf("Data not found");
+//    }
+    while(temp->link != NULL ){  //compare 2,3,4..... node
+        if(temp->link->link == NULL){  //compare whether is last node
+            if(temp->link->Score == value){
+                temp->link = NULL;
+                (*count)--;
+                break;
+            }
+        }
+        if(temp->link->Score == value){
+                temp->link = temp->link->link;
+                printf("find %d\n",temp->link->Score);
+                (*count)--;
+        }else{
+            temp = temp->link;
+        }
+    }
+}
+void sortList(Numberlist ** numberlist){
+    Numberlist * sortedList = NULL;
+    Numberlist * current = * numberlist;
+
+    while(current != NULL){
+        Numberlist * next = current->link;
+
+        if(sortedList==NULL || sortedList->Score > current->Score){  //sorted is empty or there is a new MIN value
+            current->link = sortedList;
+            sortedList = current;
+        }else{
+            Numberlist * temp = sortedList;
+            while(temp->link != NULL && temp->link->Score < current->Score){
+                temp = temp->link;
+            }
+            current->link = temp->link;
+            temp->link = current;
+        }
+        current = next;
+    }
+    *numberlist = sortedList;
+}
